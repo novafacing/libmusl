@@ -1,7 +1,7 @@
 #include <elf.h>
 #include <link.h>
 #include "pthread_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 
 #define AUX_CNT 38
 

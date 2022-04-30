@@ -1,6 +1,6 @@
 #include "locale_impl.h"
 #include "pthread_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 
 locale_t __uselocale(locale_t new)
 {

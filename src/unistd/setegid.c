@@ -1,5 +1,5 @@
 #include <unistd.h>
-#include "libc.h"
+#include "libmusl.h"
 #include "syscall.h"
 
 int setegid(gid_t egid)

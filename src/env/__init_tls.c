@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stddef.h>
 #include "pthread_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 #include "atomic.h"
 #include "syscall.h"
 

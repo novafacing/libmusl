@@ -5,7 +5,7 @@
 #include <signal.h>
 #include <sys/sysinfo.h>
 #include "syscall.h"
-#include "libc.h"
+#include "libmusl.h"
 
 #define JT(x) (-256|(x))
 #define VER JT(1)

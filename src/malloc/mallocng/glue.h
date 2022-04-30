@@ -9,7 +9,7 @@
 #include <string.h>
 #include "atomic.h"
 #include "syscall.h"
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 #include "dynlink.h"
 

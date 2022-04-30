@@ -6,7 +6,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <sys/mman.h>
-#include "libc.h"
+#include "libmusl.h"
 #include "syscall.h"
 #include "atomic.h"
 #include "futex.h"

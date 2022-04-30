@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <errno.h>
 #include <sys/mman.h>
-#include "libc.h"
+#include "libmusl.h"
 #include "atomic.h"
 #include "pthread_impl.h"
 #include "malloc_impl.h"

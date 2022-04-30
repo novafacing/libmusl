@@ -1,6 +1,6 @@
 #define _GNU_SOURCE
 #include <stdlib.h>
-#include "libc.h"
+#include "libmusl.h"
 
 char *secure_getenv(const char *name)
 {

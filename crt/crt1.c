@@ -1,5 +1,5 @@
 #include <features.h>
-#include "libc.h"
+#include "libmusl.h"
 
 #define START "_start"
 

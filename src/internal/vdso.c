@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <string.h>
-#include "libc.h"
+#include "libmusl.h"
 #include "syscall.h"
 
 #ifdef VDSO_USEFUL

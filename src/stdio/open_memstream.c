@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
-#include "libc.h"
+#include "libmusl.h"
 
 struct cookie {
 	char **bufp;

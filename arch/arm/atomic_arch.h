@@ -1,4 +1,4 @@
-#include "libc.h"
+#include "libmusl.h"
 
 #if __ARM_ARCH_4__ || __ARM_ARCH_4T__ || __ARM_ARCH == 4
 #define BLX "mov lr,pc\n\tbx"

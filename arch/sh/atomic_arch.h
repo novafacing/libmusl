@@ -1,4 +1,4 @@
-#include "libc.h"
+#include "libmusl.h"
 
 #if defined(__SH4A__)
 

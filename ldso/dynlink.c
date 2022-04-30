@@ -21,7 +21,7 @@
 #include <sys/membarrier.h>
 #include "pthread_impl.h"
 #include "fork_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 #include "dynlink.h"
 
 #define malloc __libc_malloc
@@ -1128,7 +1128,7 @@ static struct dso *load_library(const char *name, struct dso *needed_by)
 	if (find_sym(&temp_dso, "__libc_start_main", 1).sym &&
 	    find_sym(&temp_dso, "stdin", 1).sym) {
 		unmap_library(&temp_dso);
-		return load_library("libc.so", needed_by);
+		return load_library("libmusl.so", needed_by);
 	}
 	/* Past this point, if we haven't reached runtime yet, ldso has
 	 * committed either to use the mapped library or to abort execution.

@@ -1,4 +1,4 @@
 #include "version.h"
-#include "libc.h"
+#include "libmusl.h"
 
 const char __libc_version[] = VERSION;

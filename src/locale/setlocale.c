@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "locale_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 
 static char buf[LC_ALL*(LOCALE_NAME_MAX+1)];

@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <sys/mman.h>
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 #include "syscall.h"
 #include "fork_impl.h"

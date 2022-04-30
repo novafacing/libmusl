@@ -3,7 +3,7 @@
 #include <sys/mman.h>
 #include <stdlib.h>
 #include "locale_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 #include "fork_impl.h"
 

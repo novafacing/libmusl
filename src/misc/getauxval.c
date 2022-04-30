@@ -1,6 +1,6 @@
 #include <sys/auxv.h>
 #include <errno.h>
-#include "libc.h"
+#include "libmusl.h"
 
 unsigned long __getauxval(unsigned long item)
 {

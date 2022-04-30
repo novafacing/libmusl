@@ -3,7 +3,7 @@
 
 #include <locale.h>
 #include <stdlib.h>
-#include "libc.h"
+#include "libmusl.h"
 #include "pthread_impl.h"
 
 #define LOCALE_NAME_MAX 23

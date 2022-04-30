@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include "syscall.h"
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 #include "pthread_impl.h"
 #include "aio_impl.h"

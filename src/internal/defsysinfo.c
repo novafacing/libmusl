@@ -1,3 +1,3 @@
-#include "libc.h"
+#include "libmusl.h"
 
 size_t __sysinfo;

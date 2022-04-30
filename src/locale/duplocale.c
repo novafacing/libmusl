@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "locale_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 
 #define malloc __libc_malloc
 #define calloc undef

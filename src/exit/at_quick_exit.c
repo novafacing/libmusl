@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 #include "fork_impl.h"
 

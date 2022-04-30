@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <elf.h>
 #include "pthread_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 
 #define HWCAP_TLS (1 << 15)
 

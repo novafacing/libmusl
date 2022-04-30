@@ -1,5 +1,5 @@
 #include "pthread_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 #include <elf.h>
 
 /* Also perform sh-specific init */

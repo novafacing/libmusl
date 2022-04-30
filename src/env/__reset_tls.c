@@ -1,6 +1,6 @@
 #include <string.h>
 #include "pthread_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 
 void __reset_tls()
 {

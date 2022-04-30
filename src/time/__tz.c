@@ -5,7 +5,7 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <ctype.h>
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 #include "fork_impl.h"
 

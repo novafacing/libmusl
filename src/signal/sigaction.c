@@ -3,7 +3,7 @@
 #include <string.h>
 #include "syscall.h"
 #include "pthread_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 #include "ksigaction.h"
 

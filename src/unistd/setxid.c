@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include "syscall.h"
-#include "libc.h"
+#include "libmusl.h"
 
 struct ctx {
 	int id, eid, sid;

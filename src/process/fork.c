@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include <errno.h>
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 #include "pthread_impl.h"
 #include "fork_impl.h"

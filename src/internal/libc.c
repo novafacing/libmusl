@@ -1,4 +1,4 @@
-#include "libc.h"
+#include "libmusl.h"
 
 struct __libc __libc;
 

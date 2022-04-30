@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "syscall.h"
 #include "atomic.h"
-#include "libc.h"
+#include "libmusl.h"
 
 static void dummy(void) {}
 weak_alias(dummy, _init);

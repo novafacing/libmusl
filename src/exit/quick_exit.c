@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "libc.h"
+#include "libmusl.h"
 
 static void dummy() { }
 weak_alias(dummy, __funcs_on_quick_exit);

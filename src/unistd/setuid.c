@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include "syscall.h"
-#include "libc.h"
+#include "libmusl.h"
 
 int setuid(uid_t uid)
 {

@@ -1,7 +1,7 @@
 #define _GNU_SOURCE
 #include "pthread_impl.h"
 #include "stdio_impl.h"
-#include "libc.h"
+#include "libmusl.h"
 #include "lock.h"
 #include <sys/mman.h>
 #include <string.h>

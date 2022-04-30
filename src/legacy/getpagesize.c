@@ -1,6 +1,6 @@
 #define _GNU_SOURCE
 #include <unistd.h>
-#include "libc.h"
+#include "libmusl.h"
 
 int getpagesize(void)
 {
