@@ -18,7 +18,7 @@ libdir = $(prefix)/lib
 syslibdir = /lib
 
 MALLOC_DIR = mallocng
-SRC_DIRS = $(addprefix $(srcdir)/,src/* src/malloc/$(MALLOC_DIR) $(COMPAT_SRC_DIRS))
+SRC_DIRS = $(addprefix $(srcdir)/,src/* src/malloc/$(MALLOC_DIR) crt ldso $(COMPAT_SRC_DIRS))
 BASE_GLOBS = $(addsuffix /*.c,$(SRC_DIRS))
 ARCH_GLOBS = $(addsuffix /$(ARCH)/*.[csS],$(SRC_DIRS))
 BASE_SRCS = $(sort $(wildcard $(BASE_GLOBS)))
@@ -29,6 +29,8 @@ REPLACED_OBJS = $(sort $(subst /$(ARCH)/,/,$(ARCH_OBJS)))
 ALL_OBJS = $(addprefix obj/, $(filter-out $(REPLACED_OBJS), $(sort $(BASE_OBJS) $(ARCH_OBJS))))
 
 LIBC_OBJS = $(filter obj/src/%,$(ALL_OBJS)) $(filter obj/compat/%,$(ALL_OBJS))
+LDSO_OBJS = $(filter obj/ldso/%,$(ALL_OBJS:%.o=%.lo))
+CRT_OBJS = $(filter obj/crt/%,$(ALL_OBJS))
 
 AOBJS = $(LIBC_OBJS)
 LOBJS = $(LIBC_OBJS:.o=.lo)
@@ -61,14 +63,17 @@ ALL_INCLUDES = $(sort $(INCLUDES:$(srcdir)/%=%) $(GENH:obj/%=%) $(ARCH_INCLUDES:
 
 EMPTY_LIB_NAMES = m rt pthread crypt util xnet resolv dl
 EMPTY_LIBS = $(EMPTY_LIB_NAMES:%=lib/lib%.a)
+CRT_LIBS = $(addprefix lib/,$(notdir $(CRT_OBJS)))
 STATIC_LIBS = lib/libmusl.a
 SHARED_LIBS = lib/libmusl.so
 TOOL_LIBS = lib/musl-gcc.specs
-ALL_LIBS = $(STATIC_LIBS) $(SHARED_LIBS) $(EMPTY_LIBS) $(TOOL_LIBS)
+ALL_LIBS = $(CRT_LIBS) $(STATIC_LIBS) $(SHARED_LIBS) $(EMPTY_LIBS) $(TOOL_LIBS)
 ALL_TOOLS = obj/musl-gcc
 
 WRAPCC_GCC = gcc
 WRAPCC_CLANG = clang
+
+LDSO_PATHNAME = $(syslibdir)/ld-musl-$(ARCH)$(SUBARCH).so.1
 
 -include config.mak
 -include $(srcdir)/arch/$(ARCH)/arch.mak
@@ -102,18 +107,29 @@ obj/src/internal/version.h: $(wildcard $(srcdir)/VERSION $(srcdir)/.git)
 
 obj/src/internal/version.o obj/src/internal/version.lo: obj/src/internal/version.h
 
+obj/crt/rcrt1.o obj/ldso/dlstart.lo obj/ldso/dynlink.lo: $(srcdir)/src/internal/dynlink.h $(srcdir)/arch/$(ARCH)/reloc.h
+
+obj/crt/crt1.o obj/crt/scrt1.o obj/crt/rcrt1.o obj/ldso/dlstart.lo: $(srcdir)/arch/$(ARCH)/crt_arch.h
+
+obj/crt/rcrt1.o: $(srcdir)/ldso/dlstart.c
+
+obj/crt/Scrt1.o obj/crt/rcrt1.o: CFLAGS_ALL += -fPIC
+
 OPTIMIZE_SRCS = $(wildcard $(OPTIMIZE_GLOBS:%=$(srcdir)/src/%))
 $(OPTIMIZE_SRCS:$(srcdir)/%.c=obj/%.o) $(OPTIMIZE_SRCS:$(srcdir)/%.c=obj/%.lo): CFLAGS += -O3
 
 MEMOPS_OBJS = $(filter %/memcpy.o %/memmove.o %/memcmp.o %/memset.o, $(LIBC_OBJS))
 $(MEMOPS_OBJS) $(MEMOPS_OBJS:%.o=%.lo): CFLAGS_ALL += $(CFLAGS_MEMOPS)
 
-NOSSP_OBJS = $(filter \
-	%/memset.o %/memcpy.o \
+NOSSP_OBJS = $(CRT_OBJS) $(LDSO_OBJS) $(filter \
+	%/__libc_start_main.o %/__init_tls.o %/__stack_chk_fail.o \
+	%/__set_thread_area.o %/memset.o %/memcpy.o \
 	, $(LIBC_OBJS))
 $(NOSSP_OBJS) $(NOSSP_OBJS:%.o=%.lo): CFLAGS_ALL += $(CFLAGS_NOSSP)
 
-$(LOBJS): CFLAGS_ALL += -fPIC
+$(CRT_OBJS): CFLAGS_ALL += -DCRT
+
+$(LOBJS) $(LDSO_OBJS): CFLAGS_ALL += -fPIC
 
 CC_CMD = $(CC) $(CFLAGS_ALL) -c -o $@ $<
 
@@ -142,9 +158,9 @@ obj/%.lo: $(srcdir)/%.S
 obj/%.lo: $(srcdir)/%.c $(GENH) $(IMPH)
 	$(CC_CMD)
 
-lib/libmusl.so: $(LOBJS)
+lib/libmusl.so: $(LOBJS) $(LDSO_OBJS)
 	$(CC) $(CFLAGS_ALL) $(LDFLAGS_ALL) -nostdlib -shared \
-	-Wl,-e,_dlstart -o $@ $(LOBJS) $(LIBCC)
+	-Wl,-e,_dlstart -o $@ $(LOBJS) $(LDSO_OBJS) $(LIBCC)
 
 lib/libmusl.a: $(AOBJS)
 	rm -f $@
@@ -155,15 +171,21 @@ $(EMPTY_LIBS):
 	rm -f $@
 	$(AR) rc $@
 
+lib/%.o: obj/crt/$(ARCH)/%.o
+	cp $< $@
+
+lib/%.o: obj/crt/%.o
+	cp $< $@
+
 lib/musl-gcc.specs: $(srcdir)/tools/musl-gcc.specs.sh config.mak
-	sh $< "$(includedir)" "$(libdir)" > $@
+	sh $< "$(includedir)" "$(libdir)" "$(LDSO_PATHNAME)" > $@
 
 obj/musl-gcc: config.mak
 	printf '#!/bin/sh\nexec "$${REALGCC:-$(WRAPCC_GCC)}" "$$@" -specs "%s/musl-gcc.specs"\n' "$(libdir)" > $@
 	chmod +x $@
 
 obj/%-clang: $(srcdir)/tools/%-clang.in config.mak
-	sed -e 's!@CC@!$(WRAPCC_CLANG)!g' -e 's!@PREFIX@!$(prefix)!g' -e 's!@INCDIR@!$(includedir)!g' -e 's!@LIBDIR@!$(libdir)!g'  $< > $@
+	sed -e 's!@CC@!$(WRAPCC_CLANG)!g' -e 's!@PREFIX@!$(prefix)!g' -e 's!@INCDIR@!$(includedir)!g' -e 's!@LIBDIR@!$(libdir)!g' -e 's!@LDSO@!$(LDSO_PATHNAME)!g' $< > $@
 	chmod +x $@
 
 $(DESTDIR)$(bindir)/%: obj/%
@@ -187,7 +209,10 @@ $(DESTDIR)$(includedir)/bits/%: obj/include/bits/%
 $(DESTDIR)$(includedir)/%: $(srcdir)/include/%
 	$(INSTALL) -D -m 644 $< $@
 
-install-libs: $(ALL_LIBS:lib/%=$(DESTDIR)$(libdir)/%) $(if $(SHARED_LIBS),)
+$(DESTDIR)$(LDSO_PATHNAME): $(DESTDIR)$(libdir)/libmusl.so
+	$(INSTALL) -D -l $(libdir)/libmusl.so $@ || true
+
+install-libs: $(ALL_LIBS:lib/%=$(DESTDIR)$(libdir)/%) $(if $(SHARED_LIBS),$(DESTDIR)$(LDSO_PATHNAME),)
 
 install-headers: $(ALL_INCLUDES:include/%=$(DESTDIR)$(includedir)/%)
 
